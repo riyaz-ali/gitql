@@ -80,7 +80,6 @@ type RefsCursor struct {
 	repo *git.Repository      // handle to git repository
 	iter storer.ReferenceIter // handle to reference iterator .. setup during Filter
 	curr *plumbing.Reference  // pointer to current reference
-	eof  bool                 // flag set by Next when it encounters io.EOF
 }
 
 func (r *RefsCursor) Filter(i int, s string, value ...sqlite.Value) (err error) {
@@ -99,7 +98,6 @@ func (r *RefsCursor) Filter(i int, s string, value ...sqlite.Value) (err error) 
 
 func (r *RefsCursor) Next() (err error) {
 	if r.curr, err = r.iter.Next(); err == io.EOF {
-		r.eof = true
 		return nil
 	}
 	return err
@@ -139,7 +137,7 @@ func (r *RefsCursor) Close() error {
 }
 
 func (r *RefsCursor) Rowid() (int64, error) { return 0, ErrNoRowid }
-func (r *RefsCursor) Eof() bool             { return r.eof }
+func (r *RefsCursor) Eof() bool             { return r.curr == nil }
 
 func referenceNameToType(ref plumbing.ReferenceName) string {
 	switch {

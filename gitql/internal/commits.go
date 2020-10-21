@@ -154,7 +154,6 @@ type CommitsCursor struct {
 	repo *git.Repository   // handle to git repository
 	iter object.CommitIter // handle to commit iterator .. setup during Filter
 	curr *object.Commit    // commit that is currently pointed to
-	eof  bool              // flag set by Next when it encounters io.EOF
 }
 
 func (c *CommitsCursor) Filter(idx int, _ string, values ...sqlite.Value) (err error) {
@@ -165,7 +164,6 @@ func (c *CommitsCursor) Filter(idx int, _ string, values ...sqlite.Value) (err e
 		var commit *object.Commit
 		if commit, err = c.repo.CommitObject(h); err != nil {
 			if err == plumbing.ErrObjectNotFound {
-				c.eof = true
 				return nil
 			} else {
 				return err
@@ -209,7 +207,6 @@ func (c *CommitsCursor) Filter(idx int, _ string, values ...sqlite.Value) (err e
 
 func (c *CommitsCursor) Next() (err error) {
 	if c.curr, err = c.iter.Next(); err == io.EOF {
-		c.eof = true
 		return nil
 	}
 	return err
@@ -265,7 +262,7 @@ func (c *CommitsCursor) Close() error {
 }
 
 func (c *CommitsCursor) Rowid() (int64, error) { return -1, ErrNoRowid }
-func (c *CommitsCursor) Eof() bool             { return c.eof }
+func (c *CommitsCursor) Eof() bool             { return c.curr == nil }
 
 // calcCommitStats computes total addition and deletion for a given commit
 func calcCommitStats(commit *object.Commit) (add int, del int, err error) {
