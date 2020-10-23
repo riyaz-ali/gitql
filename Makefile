@@ -5,9 +5,9 @@
 #  \__, |_|\__\__, |_| - sql interface to git
 #  |___/         |_|
 
+all: clean .build/libgitql.so .build/gitql
 
-LIBSRC = $(call rwildcard, gitql, *.go)
-.build/libgitql.so: $(LIBSRC)
+.build/libgitql.so: $(shell find . -type f -name '*.go')
 	$(call log, $(CYAN), "building shared library for extension")
 	@go build -buildmode=c-shared -o $@ ./lib/shared
 	$(call log, $(GREEN), "built libgitql.so")
@@ -17,8 +17,8 @@ ifeq ($(shell uname -s),Darwin)
 	CGO_LDFLAGS = -undefined dynamic_lookup
 endif
 
-.build/gitql: $(wildcard *.go) $(LIBSRC) .build/libsqlite3.a
-	$(call log, $(CYAN), "building git-sql executable")
+.build/gitql: $(shell find . -type f -name '*.go' -o -name '*.c') .build/libsqlite3.a
+	$(call log, $(CYAN), "building gitql executable")
 	@LIBRARY_PATH=$(PWD)/.build/ CPATH=$(PWD)/.build/sqlite3 CGO_LDFLAGS="${CGO_LDFLAGS}" go build -o $@ -tags static,libsqlite3 .
 	$(call log, $(GREEN), "built gitql executable")
 
@@ -71,6 +71,3 @@ CYAN	:= 1;36
 define log
 	@printf "\033[$(strip $1)m-- %s\033[0m\n" $2
 endef
-
-# recursive wildcard
-rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
