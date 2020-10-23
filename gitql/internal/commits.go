@@ -136,7 +136,7 @@ func (c *CommitsTable) BestIndex(input *sqlite.IndexInfoInput) (*sqlite.IndexInf
 	}
 
 	if len(input.OrderBy) == 1 {
-		if input.OrderBy[0].Desc {
+		if input.OrderBy[0].Desc && input.OrderBy[0].ColumnIndex == colCommitCommitterWhen {
 			idx |= 8
 			output.OrderByConsumed = true
 		}
