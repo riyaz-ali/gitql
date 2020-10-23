@@ -2,7 +2,6 @@ package gitql
 
 import (
 	"go.riyazali.net/gitql/gitql/internal"
-	_ "go.riyazali.net/gitql/gitql/internal"
 	"go.riyazali.net/sqlite"
 )
 
