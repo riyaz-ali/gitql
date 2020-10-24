@@ -12,7 +12,7 @@ all: clean .build/libgitql.so .build/gitql
 	@go build -buildmode=c-shared -o $@ ./lib/shared
 	$(call log, $(GREEN), "built libgitql.so")
 
-CGO_LDFLAGS = --unresolved-symbols=ignore-in-object-files
+CGO_LDFLAGS = -Wl,--unresolved-symbols=ignore-in-object-files
 ifeq ($(shell uname -s),Darwin)
 	CGO_LDFLAGS = -undefined dynamic_lookup
 endif
