@@ -7,7 +7,7 @@ require (
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/mattn/go-sqlite3 v1.14.4
 	github.com/pkg/errors v0.8.1
-	go.riyazali.net/sqlite v0.0.0-20201022044758-b7de9cc2f468
+	go.riyazali.net/sqlite v0.0.0-20201024060452-50482955c4bf
 	golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897 // indirect
 	golang.org/x/net v0.0.0-20201020065357-d65d470038a5 // indirect
 	golang.org/x/sys v0.0.0-20201018230417-eeed37f84f13 // indirect
